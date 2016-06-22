@@ -1,36 +1,99 @@
-#FROM kdelfour/cloud9-docker:latest
-FROM ubuntu:trusty
-MAINTAINER Jesse Wei <jessewei@gmail.com>
-# ARG DEBIAN_FRONTEND=noninteractive
-# ARG TERM=linux
+# Build:
+# docker build -t meanjs/mean .
+#
+# Run:
+# docker run -it meanjs/mean
+#
+# Compose:
+# docker-compose up -d
 
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
-#RUN echo "deb http://repo.mongodb.org/apt/ubuntu "$(lsb_release -sc)"/mongodb-org/3.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-3.0.list
-#RUN echo "deb http://repo.mongodb.org/apt/ubuntu "$(lsb_release -sc)"/mongodb-org/3.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-3.0.list
-RUN echo "deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-3.0.list
+FROM ubuntu:latest
+MAINTAINER MEAN.JS
 
-RUN apt-get update 
-#RUN apt-get install -y mongodb-org
-RUN apt-get install -y mongodb-org git python build-essential curl
-RUN service mongod start
+# Install Utilities
+RUN apt-get update -q
+RUN apt-get install -yqq wget aptitude htop vim git traceroute dnsutils curl ssh sudo tree tcpdump nano psmisc gcc make build-essential libfreetype6 libfontconfig libkrb5-dev
 
-RUN mkdir -p /data/db
+# Install gem sass for grunt-contrib-sass
+RUN apt-get install -y ruby
+RUN gem install sass
 
-RUN mkdir /Development
-RUN cd /Development && git clone git://github.com/joyent/node
+# Install NodeJS
+RUN curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+RUN sudo apt-get install -yq nodejs
 
-RUN cd /Development/node && ./configure && make && make install
-RUN rm -rf /Development/node
-RUN chmod 777 -R /Development
+RUN npm update
 
-RUN npm install -g yo bower grunt-cli generator-meanjs express
+# Install MEAN.JS Prerequisites
+RUN npm install --quiet -g grunt-cli gulp bower yo mocha karma-cli pm2 forever
 
-# RUN curl https://j.mp/spf13-vim3 -L > spf13-vim.sh && sh spf13-vim.sh
+RUN mkdir /opt/mean.js
+RUN mkdir -p /opt/mean.js/public/lib
+WORKDIR /opt/mean.js
 
+# Copies the local package.json file to the container
+# and utilities docker container cache to not needing to rebuild
+# and install node_modules/ everytime we build the docker, but only
+# when the local package.json file changes.
+# Install npm packages
+ADD package.json /opt/mean.js/package.json
+RUN npm install --quiet
+
+# Install bower packages
+ADD bower.json /opt/mean.js/bower.json
+ADD .bowerrc /opt/mean.js/.bowerrc
+RUN bower install --quiet --allow-root --config.interactive=false
+
+# Share local directory on the docker container
+ADD . /opt/mean.js
+
+# Machine cleanup
+RUN npm cache clean
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Set development environment as default
+ENV NODE_ENV development
+
+# Ports generic
 EXPOSE 80:80
 EXPOSE 443:443
+
+# Port 3000 for MEAN.JS server
 EXPOSE 3000:3000
 
+# Port 5858 for node debug
+EXPOSE 5858:5858
+
+# Port 35729 for livereload
+EXPOSE 35729:35729
+
+# Run MEAN.JS server
+CMD ["npm", "start"]
 
 
-RUN echo "\n##############################\n1. Create a new user with adduser, 'su' into that user.\n2. 'yo meanjs' to scaffold your app in the current directory.\n3. Start mongo in the background (e.g. 'mongod &')\n##############################\n"
+# ------------------------------------------------------------------------------
+# Install Cloud9
+RUN git clone https://github.com/c9/core.git /cloud9
+WORKDIR /cloud9
+RUN scripts/install-sdk.sh
+
+# Tweak standlone.js conf
+RUN sed -i -e 's_127.0.0.1_0.0.0.0_g' /cloud9/configs/standalone.js 
+
+# Add supervisord conf
+ADD conf/cloud9.conf /etc/supervisor/conf.d/
+
+# ------------------------------------------------------------------------------
+# Add volumes
+RUN mkdir /workspace
+VOLUME /workspace
+
+# ------------------------------------------------------------------------------
+# Clean up APT when done.
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# ------------------------------------------------------------------------------
+# Expose ports.
+EXPOSE 80
+EXPOSE 3000
+
