@@ -1,7 +1,11 @@
 Cloud9 IDE with MEAN.JS
 ================
-[![MEAN.JS Logo](http://meanjs.org/img/logo-small.png)](http://meanjs.org/)
-[![Cloud9 Logo](https://cdn.c9.io/nc-3.1.2777-37571e6c-wf/static/plugins/c9.profile/static/images/cloud9-logo.svg)(https://c9.io/?redirect=0)]
+
+[![MEAN.JS Logo](http://meanjs.org/img/logo-small.png)](http://meanjs.org/)  
+<a href="https://c9.io/?redirect=0">
+<img src="https://cdn.c9.io/nc-3.1.2777-37571e6c-wf/static/plugins/c9.profile/static/images/cloud9-logo.svg" width="120">
+</a>
+
 
 This repository contains Dockerfile Cloud9 and MEAN.JS for my exercise.  I will make readme clear step by step.
 The Cloud9 IDE with some usefull features for convenience and secure development environment for Docker's automated build published to the public Docker Hub Registry.
