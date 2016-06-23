@@ -1,14 +1,17 @@
+
+
 Cloud9 IDE with MEAN.JS
 ================
+[![Docker Stars](https://img.shields.io/docker/stars/jessewei/c9-meanjs.svg?style=flat-square)](https://hub.docker.com/r/jessewei/c9-meanjs/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/jessewei/c9-meanjs.svg?style=flat-square)](https://hub.docker.com/r/jessewei/c9-meanjs/)
+
 
 [![MEAN.JS Logo](http://meanjs.org/img/logo-small.png)](http://meanjs.org/)  
-<a href="https://c9.io/?redirect=0">
-<img src="https://cdn.c9.io/nc-3.1.2777-37571e6c-wf/static/plugins/c9.profile/static/images/cloud9-logo.svg" width="120">
-</a>
+## [Cloud 9](https://c9.io)
 
 
-This repository contains Dockerfile Cloud9 and MEAN.JS for my exercise.  I will make readme clear step by step.
-The Cloud9 IDE with some usefull features for convenience and secure development environment for Docker's automated build published to the public Docker Hub Registry.
+This repository contains Dockerfile Cloud9 and MEAN.JS. 
+The Cloud9 IDE with some useful features for convenience and secure development environment for Docker's automated build published to the public Docker Hub Registry.
 MEAN.JS is a full-stack JavaScript open-source solution, which provides a solid starting point for [MongoDB](http://www.mongodb.org/), [Node.js](http://www.nodejs.org/), [Express](http://expressjs.com/), and [AngularJS](http://angularjs.org/) based applications. The idea is to solve the common issues with connecting those frameworks, build a robust framework to support daily development needs, and help developers use better practices while working with popular JavaScript components.
 
 ## Before You Begin
@@ -25,7 +28,7 @@ Before you begin we recommend you read about the basic building blocks that asse
 - Optimized build process (please suggest if any idea to make it better)
 
 # Base Docker Image
-[tutum/ubuntu:trusty](https://registry.hub.docker.com/u/tutum/ubuntu/)
+[meanjs/mean](https://hub.docker.com/r/meanjs/mean/)
 
 # Installation
 
@@ -33,33 +36,34 @@ Before you begin we recommend you read about the basic building blocks that asse
 
 Download automated build from public Docker Hub Registry: 
 
-    docker pull agungf/cloud9-ide
+    docker pull jessewei/c9-meanjs
 
 alternatively, you can build an image from Dockerfile:
 
-    docker build -t="$USER/cloud9-ide" github.com/agungf/cloud9-ide
+    docker build -t="$USER/c9-meanjs" github.com/jessewei/c9-meanjs
     
     
 ## Basic Usage
 
-    docker run -it -d -p 8181:8181 -p 2222:22 agungf/cloud9-ide
+    docker run  --name c9 -it -d -p 8181:8181 -p 2222:22 jessewei/c9-meanjs
     
 It will take care all the defaults to:
 
 - Cloud9 Basic http auth User `root` , with DEFAULT password: `secret`
-- See Auto generated SSH password for root at log, `docker logs <continer instance name>`
+- See Auto generated SSH password for root at log, 
+    `docker logs <continer instance name>`
 - Workspace directory at `/cloud9/workspace` 
     
 You can add a workspace as a volume directory with the argument *-v /your-path/workspace/:cloud9/workspace* like this :
 
-    docker run -it -d -p 8181:8181 -v /your-path/workspace/:/cloud9/workspace agungf/cloud9-ide
+    docker run --name c9 -it -d -p 8181:8181 -v /c/Users/yourName/workspace/:/cloud9/workspace jessewei/c9-meanjs
 
 
 ## Advance Usage
 
 Get the latest version from github
 
-    git clone https://github.com/agungf/cloud9-ide
+    git clone https://github.com/jessewei/c9-meanjs
     cd cloud9-ide/
 
 Run with docker compose:
