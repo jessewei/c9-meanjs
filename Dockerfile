@@ -2,9 +2,6 @@
 # Based on a work at https://github.com/docker/docker.
 # ------------------------------------------------------------------------------
 # Pull base image.
-# FROM tutum/ubuntu:trusty
-# MAINTAINER Agung Firdaus <agung@jagad.co.id>
-
 FROM meanjs/mean
 MAINTAINER Jesse Wei <web.jesse@gmail.com>
 
