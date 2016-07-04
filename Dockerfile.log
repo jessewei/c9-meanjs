@@ -2,7 +2,7 @@
 # Based on a work at https://github.com/docker/docker.
 # ------------------------------------------------------------------------------
 # Pull base image.
-FROM jessewei/mean
+FROM meanjs/mean
 MAINTAINER Jesse Wei <web.jesse@gmail.com>
 
 # ------------------------------------------------------------------------------
@@ -11,8 +11,8 @@ RUN apt-get update && apt-get -y install git curl build-essential supervisor
 
 # ------------------------------------------------------------------------------
 # Install nodejs
-#RUN curl -sL https://deb.nodesource.com/setup | sudo bash -
-#RUN apt-get -y install nodejs
+RUN curl -sL https://deb.nodesource.com/setup | sudo bash -
+RUN apt-get -y install nodejs
 
 # ------------------------------------------------------------------------------
 # Get cloud9 source and install
@@ -45,5 +45,3 @@ EXPOSE 8181
 # ------------------------------------------------------------------------------
 # Start supervisor, define default command.
 ENTRYPOINT /usr/bin/supervisord
-
-
